@@ -1,6 +1,8 @@
 import Link from "next/link";
 import Image from "next/image";
 
+import CustomLink from "@/components/CustomLink"
+
 interface subNavigationItem {
     name: string;
     href: string;
@@ -35,6 +37,7 @@ const navigationData: navigationItem[] = [
             { name: "ENGR 150", href: "/engr-150" },
         ],
     },
+    { name: "Admin", href: "/admin" }
 ];
 
 // https://picsum.photos/150
@@ -54,6 +57,7 @@ const Navbar: React.FC = () => {
                     SBCC Physics
                 </Link>
             </div>
+            {/* TODO: Add mobile menu */}
             <button
                 data-collapse-toggle="navbar-default"
                 type="button"
@@ -78,31 +82,39 @@ const Navbar: React.FC = () => {
                     />
                 </svg>
             </button>
-            <nav className="hidden ml-auto text-xl space-x-4 lg:space-x-6 font-bold md:flex mr-16">
+            <nav className="hidden ml-auto text-xl space-x-4 lg:space-x-6 font-bold md:flex mr-16" aria-label="primary navigaiton">
                 {navigationData.map((navItem, index) => (
                     <div key={index} className="flex items-center relative group">
-                        <Link
-                            className="flex items-center relative text-gray-100 before:transition-all before:absolute before:left-0 before:bottom-0 before:h-0.5 before:w-0 before:bg-gray-100 hover:before:w-full"
+                        <CustomLink
+                            className="p-2"
                             href={navItem.href}
+                            textColor={"gray-100"}
+                            underlineColor={navItem.submenu ? undefined : "gray-100"}
                         >
                             {navItem.name}
-                        </Link>
+                        </CustomLink>
                         {navItem.submenu && (
-                            <ul className="block absolute text-left border border-black p-2 left-0 top-[125%] text-black text-sm text-nowrap bg-gray-100 transition-transform origin-top scale-y-0 group-hover:scale-100">
-                                {navItem.submenu.map((subNavItem, index) => (
-                                    <li
-                                        key={index}
-                                        className="p-2 relative"
-                                    >
-                                        <Link
-                                            href={subNavItem.href}
-                                            className="hover:text-[#991c2d] before:transition-all before:absolute before:left-0 before:bottom-0 before:h-0.5 before:w-0 before:bg-[#991c2d] hover:before:w-full"
+                            <div aria-label={`container for list of ${navItem.name}`} className="block absolute  top-[100%] z-10 transition-transform origin-top scale-y-0 ease-out group-hover:scale-100">
+                                <div className="h-0.5" aria-hidden="true"></div>
+                                <ul className="text-left border border-black p-2 left-0 text-black text-sm text-nowrap bg-gray-100" aria-label={`list of ${navItem.name}`}>
+                                    {navItem.submenu.map((subNavItem, index) => (
+                                        <li
+                                            key={index}
+                                            className="p-2"
                                         >
-                                            {subNavItem.name}
-                                        </Link>
-                                    </li>
-                                ))}
-                            </ul>
+                                            {/* TODO: Fix bug - make hover only expand to width of text instead of full length*/}
+                                            <CustomLink
+                                                href={subNavItem.href}
+                                                className="inline-block hover:text-[#991c2d]"
+                                                textColor="black"
+                                                underlineColor="[#991c2d]"
+                                            >
+                                                {subNavItem.name}
+                                            </CustomLink>
+                                        </li>
+                                    ))}
+                                </ul>
+                            </div>
                         )}
                     </div>
                 ))}
